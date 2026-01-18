@@ -49,3 +49,17 @@ next-env.d.ts
 # Docker Volumes
 mongo-data/
 redis-data/
+
+# Unnecessary Files - Documentation and Media
+*.doc
+*.docx
+*.txt
+*.png
+*.jpg
+*.jpeg
+*.webm
+*.mp4
+*.gif
+~$*
+data/
+index.html
