@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Content } from '../models';
 import { contentAccessService } from '../services/content-access.service';
+import { contentService } from '../services/content.service';
 import { ApiResponse } from '../types';
 import { NotFoundError } from '../utils';
 
@@ -29,16 +30,11 @@ export class ContentController {
       query.$text = { $search: search as string };
     }
 
-    const skip = (Number(page) - 1) * Number(limit);
-    
-    const [content, total] = await Promise.all([
-      Content.find(query)
-        .select('-fileUrl') // Don't expose file URLs in list
-        .sort({ publishedAt: -1 })
-        .skip(skip)
-        .limit(Number(limit)),
-      Content.countDocuments(query),
-    ]);
+    const { content, total } = await contentService.listContent(
+      query,
+      Number(page),
+      Number(limit)
+    );
 
     const response: ApiResponse = {
       success: true,

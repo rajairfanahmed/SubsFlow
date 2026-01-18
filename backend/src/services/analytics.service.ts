@@ -2,6 +2,7 @@ import { AnalyticsEvent, AnalyticsEventType } from '../models/analytics-event.mo
 import { Subscription, Payment, User, Content } from '../models';
 import { logger } from '../utils';
 import { Types } from 'mongoose';
+import { getRedisClient, isRedisConnected } from '../config/redis';
 
 export interface TrackEventData {
   userId?: string;
@@ -75,7 +76,25 @@ export class AnalyticsService {
   /**
    * Get dashboard overview metrics
    */
+  /**
+   * Get dashboard overview metrics
+   */
   async getDashboardMetrics(range: DateRange): Promise<DashboardMetrics> {
+    const cacheKey = `analytics:dashboard:${range.start.toISOString()}:${range.end.toISOString()}`;
+
+    try {
+      if (await isRedisConnected()) {
+        const redis = getRedisClient();
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          logger.debug('Dashboard metrics cache hit');
+          return JSON.parse(cached);
+        }
+      }
+    } catch (error) {
+      logger.warn('Cache read error', { error });
+    }
+
     const [
       totalUsers,
       newUsers,
@@ -92,7 +111,7 @@ export class AnalyticsService {
       this.getContentStats(range),
     ]);
 
-    return {
+    const metrics = {
       totalUsers,
       newUsers,
       activeSubscriptions: subscriptionStats.active,
@@ -102,6 +121,17 @@ export class AnalyticsService {
       contentViews: contentStats.totalViews,
       topContent: contentStats.top,
     };
+
+    try {
+      if (await isRedisConnected()) {
+        const redis = getRedisClient();
+        await redis.setex(cacheKey, 300, JSON.stringify(metrics)); // Cache for 5 mins
+      }
+    } catch (error) {
+      logger.warn('Cache write error', { error });
+    }
+
+    return metrics;
   }
 
   /**

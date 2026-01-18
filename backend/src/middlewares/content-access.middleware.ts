@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { Subscription, Content } from '../models';
+import { Subscription } from '../models';
+import { contentService } from '../services/content.service';
 import { AuthorizationError, NotFoundError } from '../utils';
 
 /**
@@ -14,8 +15,8 @@ export function requireContentAccess(contentIdParam: string = 'contentId') {
         return;
       }
 
-      // Get content
-      const content = await Content.findById(contentId);
+      // Get content (from cache if available)
+      const content = await contentService.getContentById(contentId);
       if (!content) {
         next(new NotFoundError('Content'));
         return;
