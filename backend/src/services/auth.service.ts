@@ -23,7 +23,10 @@ export class AuthService {
   /**
    * Register a new user
    */
-  async register(input: RegisterInput): Promise<{ user: IUserDocument; tokens: TokenPair }> {
+  /**
+   * Register a new user
+   */
+  async register(input: RegisterInput): Promise<{ user: IUserDocument }> {
     const { email, password, name, phone } = input;
 
     // Check if user exists
@@ -45,16 +48,13 @@ export class AuthService {
       emailVerificationExpires: calculateExpiry('24h'),
     });
 
-    // Generate tokens
-    const tokens = await this.generateTokens(user);
-
     // Send welcome email (async, don't block registration)
     notificationService.sendWelcomeNotification(user._id.toString(), verificationToken)
       .catch(err => logger.error('Failed to send welcome email', { userId: user._id, error: err }));
 
     logger.info('User registered', { userId: user._id, email: user.email });
 
-    return { user, tokens };
+    return { user };
   }
 
   /**
@@ -73,6 +73,11 @@ export class AuthService {
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       throw new AuthenticationError('Invalid email or password');
+    }
+
+    // Check email verification if required
+    if (config.app.requireEmailVerification && !user.emailVerified) {
+        throw new AuthenticationError('Please verify your email address to log in');
     }
 
     // Update last login

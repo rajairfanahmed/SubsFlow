@@ -39,8 +39,12 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       await registerUser({ email: data.email, password: data.password, name: data.name });
-      toast("Account created! Please log in.");
-      // Note: AuthContext redirects to /login
+      toast("Account created! Redirecting to login...");
+      
+      // Wait for 1.5s for user to read toast
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      router.push("/login");
     } catch (error) {
       // Error handling is managed by AuthContext usually, but visual feedback here:
       toast("Registration failed. Please try again.", { type: "error" });

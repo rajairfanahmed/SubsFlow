@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// Force rebuild timestamp: 2026-01-18
 const nextConfig = {
     images: {
         remotePatterns: [

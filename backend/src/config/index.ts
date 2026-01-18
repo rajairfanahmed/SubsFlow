@@ -68,6 +68,7 @@ export const config = {
     name: process.env.APP_NAME || 'SubsFlow',
     url: process.env.APP_URL || 'http://localhost:3000',
     frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+    requireEmailVerification: process.env.REQUIRE_EMAIL_VERIFICATION === 'true',
   },
   
   // Rate Limiting

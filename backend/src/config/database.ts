@@ -41,7 +41,8 @@ export async function connectDatabase(retries = MAX_RETRIES): Promise<void> {
       
       await mongoose.connect(config.mongodb.uri, {
         ...config.mongodb.options,
-        serverSelectionTimeoutMS: 10000, // 10 second timeout
+        maxPoolSize: 10, // Connection pooling
+        serverSelectionTimeoutMS: 10000,
         connectTimeoutMS: 10000,
       });
       

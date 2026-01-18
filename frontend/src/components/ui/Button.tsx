@@ -4,6 +4,7 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { Slot } from "@radix-ui/react-slot";
 import { motion, HTMLMotionProps } from "framer-motion";
 
 const buttonVariants = cva(
@@ -11,7 +12,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[#0F172A] text-white hover:bg-slate-800 shadow-lg shadow-indigo-500/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.25)] border border-slate-800",
+        default: "bg-[#0F172A] text-white hover:bg-slate-800 shadow-lg shadow-indigo-500/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.25)] border border-slate-800 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]",
         destructive: "bg-red-500 text-white hover:bg-red-600 shadow-sm hover:shadow-red-500/20",
         outline: "border border-slate-200 bg-white hover:bg-slate-50 text-slate-900",
         secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200/80",
@@ -88,7 +89,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 Button.displayName = "Button";
 
-import { Slot } from "@radix-ui/react-slot";
+
 
 // Re-export variants
 export { Button, buttonVariants };

@@ -1,15 +1,16 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { authService } from '../services/auth.service';
 import { ApiResponse } from '../utils/ApiResponse';
 import { ValidationError } from '../utils';
+import { asyncHandler } from '../middlewares/error.middleware';
 
 export class AuthController {
     /**
      * POST /auth/register
      * STRICT: Does NOT return token. User must log in after registration.
      */
-    async register(req: Request, res: Response): Promise<void> {
+    register = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         const { email, password, name } = req.body;
 
         // Input validation - fail fast before DB call
@@ -41,12 +42,12 @@ export class AuthController {
         );
 
         res.status(StatusCodes.CREATED).json(response);
-    }
+    });
 
     /**
      * POST /auth/login
      */
-    async login(req: Request, res: Response): Promise<void> {
+    login = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         const { email, password } = req.body;
 
         // Input validation - fail fast
@@ -78,12 +79,12 @@ export class AuthController {
         );
 
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 
     /**
      * POST /auth/refresh
      */
-    async refreshToken(req: Request, res: Response): Promise<void> {
+    refreshToken = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         const { refreshToken } = req.body;
 
         if (!refreshToken || typeof refreshToken !== 'string') {
@@ -101,12 +102,12 @@ export class AuthController {
         );
 
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 
     /**
      * POST /auth/logout
      */
-    async logout(req: Request, res: Response): Promise<void> {
+    logout = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         const { refreshToken } = req.body;
 
         if (refreshToken) {
@@ -115,12 +116,12 @@ export class AuthController {
 
         const response = ApiResponse.success(null, 'Logged out successfully');
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 
     /**
      * POST /auth/logout-all
      */
-    async logoutAll(req: Request, res: Response): Promise<void> {
+    logoutAll = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         if (!req.userId) {
             throw new ValidationError('User not authenticated');
         }
@@ -129,12 +130,12 @@ export class AuthController {
 
         const response = ApiResponse.success(null, 'Logged out from all devices');
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 
     /**
      * POST /auth/forgot-password
      */
-    async forgotPassword(req: Request, res: Response): Promise<void> {
+    forgotPassword = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         const { email } = req.body;
 
         if (!email || typeof email !== 'string') {
@@ -149,12 +150,12 @@ export class AuthController {
             'If the email exists, a reset link has been sent'
         );
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 
     /**
      * POST /auth/reset-password
      */
-    async resetPassword(req: Request, res: Response): Promise<void> {
+    resetPassword = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         const { token, password } = req.body;
 
         if (!token || typeof token !== 'string') {
@@ -168,12 +169,12 @@ export class AuthController {
 
         const response = ApiResponse.success(null, 'Password reset successfully');
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 
     /**
      * POST /auth/verify-email
      */
-    async verifyEmail(req: Request, res: Response): Promise<void> {
+    verifyEmail = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         const { token } = req.body;
 
         if (!token || typeof token !== 'string') {
@@ -184,12 +185,12 @@ export class AuthController {
 
         const response = ApiResponse.success(null, 'Email verified successfully');
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 
     /**
      * POST /auth/change-password
      */
-    async changePassword(req: Request, res: Response): Promise<void> {
+    changePassword = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         const { currentPassword, newPassword } = req.body;
 
         if (!req.userId) {
@@ -206,12 +207,12 @@ export class AuthController {
 
         const response = ApiResponse.success(null, 'Password changed successfully');
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 
     /**
      * GET /auth/me - Get current user
      */
-    async getMe(req: Request, res: Response): Promise<void> {
+    getMe = asyncHandler(async (req: Request, res: Response): Promise<void> => {
         if (!req.userId) {
             throw new ValidationError('User not authenticated');
         }
@@ -228,7 +229,7 @@ export class AuthController {
         );
 
         res.status(StatusCodes.OK).json(response);
-    }
+    });
 }
 
 export const authController = new AuthController();

@@ -69,8 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // User must log in manually after registration
       await authService.register(payload);
 
-      // Redirect to login page (not dashboard)
-      router.push('/login?registered=true');
+      // Redirect handled by component for better UX control
     } catch (error) {
       throw error;
     } finally {
