@@ -65,11 +65,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (payload: RegisterPayload) => {
     setIsAuthenticating(true);
     try {
-      const response = await authService.register(payload);
-      localStorage.setItem('token', response.token);
-      setUser(response.user);
+      // Backend does NOT return token on register
+      // User must log in manually after registration
+      await authService.register(payload);
 
-      router.push('/dashboard');
+      // Redirect to login page (not dashboard)
+      router.push('/login?registered=true');
     } catch (error) {
       throw error;
     } finally {

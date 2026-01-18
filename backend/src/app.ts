@@ -6,161 +6,185 @@ import rateLimit from 'express-rate-limit';
 import 'express-async-errors';
 
 import { config } from './config';
-import { logger, AppError, generateRequestId } from './utils';
+import { logger, AppError, generateRequestId, ApiResponse } from './utils';
+import { errorHandler, notFoundHandler } from './middlewares/error.middleware';
 
 // Extend Express Request type
 declare global {
-  namespace Express {
-    interface Request {
-      requestId: string;
-      userId?: string;
-      userRole?: string;
+    namespace Express {
+        interface Request {
+            requestId: string;
+            userId?: string;
+            userRole?: string;
+        }
     }
-  }
 }
 
 const app: Application = express();
+
+// ============================================
+// SECURITY CONFIGURATION
+// ============================================
 
 // Trust proxy for rate limiting behind reverse proxy
 app.set('trust proxy', 1);
 
 // Request ID middleware (must be first)
 app.use((req: Request, _res: Response, next: NextFunction) => {
-  req.requestId = generateRequestId();
-  next();
+    req.requestId = generateRequestId();
+    next();
 });
 
-// Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "js.stripe.com"],
-      frameSrc: ["'self'", "js.stripe.com"],
-    },
-  },
-  hsts: { maxAge: 31536000, includeSubDomains: true },
-}));
+// Helmet - Security Headers (Strict Configuration)
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", 'js.stripe.com'],
+                frameSrc: ["'self'", 'js.stripe.com', 'hooks.stripe.com'],
+                imgSrc: ["'self'", 'data:', 'https:'],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+                fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+                connectSrc: ["'self'", 'api.stripe.com'],
+            },
+        },
+        hsts: {
+            maxAge: 31536000, // 1 year
+            includeSubDomains: true,
+            preload: true,
+        },
+        referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+        crossOriginEmbedderPolicy: false, // Disable for Stripe iframe
+        crossOriginOpenerPolicy: { policy: 'same-origin' },
+        crossOriginResourcePolicy: { policy: 'cross-origin' },
+    })
+);
 
-// CORS
-app.use(cors({
-  origin: [config.app.frontendUrl, 'http://localhost:5173', 'http://localhost:3001'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
-}));
+// CORS - Strict Configuration with Credentials
+const allowedOrigins = [
+    config.app.frontendUrl,
+    'http://localhost:3000',
+    'http://localhost:5173',
+];
+
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            // Allow requests with no origin (mobile apps, curl, etc.)
+            if (!origin) return callback(null, true);
+
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                logger.warn('CORS blocked request from:', { origin });
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        credentials: true, // Allow cookies/auth headers
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID', 'X-CSRF-Token'],
+        exposedHeaders: ['X-Request-ID', 'X-RateLimit-Remaining'],
+        maxAge: 86400, // Cache preflight for 24 hours
+    })
+);
 
 // Compression
 app.use(compression());
 
-// Rate limiting (skip for webhooks)
+// Rate Limiting (skip for webhooks)
 const limiter = rateLimit({
-  windowMs: config.rateLimit.windowMs,
-  max: config.rateLimit.maxRequests,
-  message: {
-    success: false,
-    error: {
-      code: 'RATE_LIMIT_ERROR',
-      message: 'Too many requests, please try again later',
-    },
-  },
-  skip: (req) => req.path.startsWith('/api/webhooks'),
-  keyGenerator: (req) => req.ip || 'unknown',
+    windowMs: config.rateLimit.windowMs,
+    max: config.rateLimit.maxRequests,
+    message: ApiResponse.rateLimited('Too many requests, please try again later'),
+    skip: (req) => req.path.startsWith('/api/webhooks'),
+    keyGenerator: (req) => req.ip || 'unknown',
+    standardHeaders: true, // Return rate limit info in headers
+    legacyHeaders: false,
 });
 app.use('/api', limiter);
 
-// Body parsing - IMPORTANT: Raw body for Stripe webhooks
+// ============================================
+// BODY PARSING
+// ============================================
+
+// Raw body for Stripe webhooks (MUST be before json parser)
 app.use('/api/webhooks/stripe', express.raw({ type: 'application/json' }));
+
+// JSON and URL-encoded body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Request logging
+// ============================================
+// REQUEST LOGGING
+// ============================================
+
 app.use((req: Request, res: Response, next: NextFunction) => {
-  const start = Date.now();
-  
-  res.on('finish', () => {
-    const duration = Date.now() - start;
-    logger.http(`${req.method} ${req.path}`, {
-      requestId: req.requestId,
-      method: req.method,
-      path: req.path,
-      statusCode: res.statusCode,
-      duration: `${duration}ms`,
-      ip: req.ip,
-      userAgent: req.get('user-agent'),
+    const start = Date.now();
+
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        const logLevel = res.statusCode >= 400 ? 'warn' : 'http';
+
+        logger[logLevel](`${req.method} ${req.path}`, {
+            requestId: req.requestId,
+            method: req.method,
+            path: req.path,
+            statusCode: res.statusCode,
+            duration: `${duration}ms`,
+            ip: req.ip,
+            userAgent: req.get('user-agent'),
+        });
     });
-  });
-  
-  next();
+
+    next();
 });
 
-// Health check endpoints
+// ============================================
+// HEALTH CHECK ENDPOINTS
+// ============================================
+
 app.get('/health', (_req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+    const response = ApiResponse.success(
+        {
+            status: 'ok',
+            timestamp: new Date().toISOString(),
+            version: process.env.npm_package_version || '1.0.0',
+        },
+        'Service is healthy'
+    );
+    res.status(200).json(response);
 });
 
 app.get('/health/ready', async (_req: Request, res: Response) => {
-  // Will add DB and Redis checks when routes are set up
-  res.status(200).json({ 
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    services: {
-      api: 'healthy',
-    },
-  });
+    const response = ApiResponse.success(
+        {
+            status: 'ok',
+            timestamp: new Date().toISOString(),
+            services: {
+                api: 'healthy',
+            },
+        },
+        'Service is ready'
+    );
+    res.status(200).json(response);
 });
 
-// API Routes
+// ============================================
+// API ROUTES
+// ============================================
+
 import { apiRoutes } from './routes';
 app.use('/api', apiRoutes);
 
-// 404 handler
-app.use((_req: Request, _res: Response, next: NextFunction) => {
-  next(new AppError('Route not found', 404, 'NOT_FOUND'));
-});
+// ============================================
+// ERROR HANDLING
+// ============================================
 
-// Global error handler
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-  const requestId = req.requestId;
-  
-  if (err instanceof AppError) {
-    logger.warn('Operational error', {
-      requestId,
-      code: err.code,
-      message: err.message,
-      statusCode: err.statusCode,
-      path: req.path,
-    });
-    
-    return res.status(err.statusCode).json({
-      success: false,
-      error: {
-        code: err.code,
-        message: err.message,
-        details: err.details,
-        requestId,
-      },
-    });
-  }
-  
-  // Unexpected error
-  logger.error('Unexpected error', {
-    requestId,
-    message: err.message,
-    stack: err.stack,
-    path: req.path,
-  });
-  
-  return res.status(500).json({
-    success: false,
-    error: {
-      code: 'INTERNAL_ERROR',
-      message: config.env === 'production' 
-        ? 'An unexpected error occurred' 
-        : err.message,
-      requestId,
-    },
-  });
-});
+// 404 Not Found Handler
+app.use(notFoundHandler);
+
+// Global Error Handler (must be last)
+app.use(errorHandler);
 
 export { app };

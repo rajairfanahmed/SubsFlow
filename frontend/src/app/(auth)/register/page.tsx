@@ -39,8 +39,8 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       await registerUser({ email: data.email, password: data.password, name: data.name });
-      toast("Account created successfully!");
-      router.push("/dashboard");
+      toast("Account created! Please log in.");
+      // Note: AuthContext redirects to /login
     } catch (error) {
       // Error handling is managed by AuthContext usually, but visual feedback here:
       toast("Registration failed. Please try again.", { type: "error" });
