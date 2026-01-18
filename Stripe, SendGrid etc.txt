@@ -1,0 +1,9 @@
+Stripe:
+publishable key: pk_test_51SoaotQYPOSgFe2HIwyvzUcgXVVMtyU2Elw7EtyzFeqYBKdxVo2MCXg2qgPjF5Y6ZCJ8RDSUKgxqZWJa2FImj7jR008dfoHjdP
+Secret Key: sk_test_51SoaotQYPOSgFe2Hc0KIHmufATYDQlGVjB23K8VTB4qsTNGKlHyjNmx4YZF3dmXVdXMJ3hqcQ0neG9fB1gnxZJjZ00GVfCr6vJ
+
+
+SendGrid:
+API Key: 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
+
+MongoDb: mongodb://localhost:27017/

@@ -1,0 +1,1094 @@
+================================================================================
+                    SUBSFLOW - COMPLETE PROJECT DOCUMENTATION
+================================================================================
+
+================================================================================
+                              PROJECT OVERVIEW
+================================================================================
+
+Brand Name: SubsFlow
+Tagline: Production-grade subscription management platform
+
+Platform Type: SaaS Subscription & Membership Platform
+Business Model: B2B2C - Platform for creators to monetize their content
+
+Industry Focus: 
+- Content Monetization
+- Digital Subscription Management
+- Creator Economy
+
+================================================================================
+                              TARGET AUDIENCE
+================================================================================
+
+Primary Users:
+1. CONTENT CREATORS
+   - Individual creators jo apna digital content monetize karna chahte hain
+   - YouTubers, bloggers, artists
+   - Jo exclusive content offer karte hain subscribers ko
+
+2. DIGITAL PUBLISHERS
+   - Media organizations with subscriber-based content
+   - News websites, magazines
+   - Premium articles aur stories wale platforms
+
+3. ONLINE EDUCATORS
+   - Course creators aur educational platforms
+   - Teachers jo online courses bechte hain
+   - Training aur tutorial providers
+
+4. MEMBERSHIP COMMUNITIES
+   - Private communities with tiered access
+   - Discord servers, forums
+   - Exclusive groups jo membership pe based hain
+
+Secondary Users:
+- Subscribers (end users who pay for content)
+- Content Managers (staff who manage content)
+- Administrators (platform admins)
+
+================================================================================
+                              CORE FEATURES
+================================================================================
+
+1. Authentication & User Management
+2. Subscription Management with Stripe
+3. Tier-Based Content Access Control
+4. Payment Processing & Billing
+5. Email Notifications via SendGrid
+6. In-App Notifications
+7. Analytics & Reporting Dashboard
+8. Admin Management Panel
+
+================================================================================
+                    TECHNOLOGY STACK (Backend)
+================================================================================
+
+Runtime: Node.js 20+
+Framework: Express.js
+Language: TypeScript
+Database: MongoDB 7+
+Cache: Redis 7+
+Payment Gateway: Stripe
+Email Service: SendGrid
+Job Queue: Bull (Redis-based)
+Testing: Jest
+
+================================================================================
+                              USER ROLES
+================================================================================
+
+1. SUBSCRIBER (Default Role)
+   - Normal user jo content access karta hai
+   - Subscription le sakta hai
+   - Content view kar sakta hai based on tier
+
+2. CONTENT_MANAGER
+   - Content create aur edit kar sakta hai
+   - Content analytics dekh sakta hai
+   - Content publish kar sakta hai
+
+3. ADMIN
+   - Full system access
+   - User management
+   - Plan management
+   - All analytics
+   - Billing management
+
+================================================================================
+                              PAGE CONTENT DOCUMENTATION
+================================================================================
+
+--------------------------------------------------------------------------------
+                              PUBLIC PAGES
+--------------------------------------------------------------------------------
+
+=== LANDING PAGE (Home) ===
+
+Page Purpose: Platform introduction and conversion
+
+Content Sections:
+1. HERO SECTION
+   - Brand name "SubsFlow" prominently
+   - Main headline about subscription management
+   - Subheadline explaining platform value
+   - Call-to-action buttons: "Get Started" aur "View Pricing"
+   - Hero image/illustration subscription concept ki
+
+2. FEATURES SECTION
+   - Feature cards with icons
+   - Authentication (JWT-based secure auth)
+   - Stripe Integration (subscription payments)
+   - Email Notifications (SendGrid powered)
+   - Tier-Based Access (content gating)
+   - Analytics Dashboard (metrics tracking)
+   - In-App Notifications (real-time alerts)
+
+3. HOW IT WORKS SECTION
+   - Step 1: Sign Up - Create account
+   - Step 2: Choose Plan - Select subscription tier
+   - Step 3: Access Content - Enjoy tier-based content
+   - Step 4: Manage Billing - Portal for payments
+
+4. TESTIMONIALS SECTION (if any)
+   - Customer reviews
+   - Success stories
+
+5. CALL TO ACTION SECTION
+   - Final push to sign up
+   - Benefits summary
+
+6. FOOTER
+   - Navigation links
+   - Social media links
+   - Legal links (Privacy, Terms)
+   - Contact information
+
+--------------------------------------------------------------------------------
+
+=== PRICING PAGE ===
+
+Page Purpose: Display all subscription plans
+
+Content Sections:
+1. PAGE HEADER
+   - "Choose Your Plan" heading
+   - Subtitle about flexible pricing
+
+2. PRICING TOGGLE
+   - Monthly/Yearly billing switch
+   - Annual discount indicator (save X%)
+
+3. PLAN CARDS
+   For each plan will show:
+   - Plan Name (e.g., Basic, Pro, Premium)
+   - Plan Description
+   - Price with currency (USD, EUR, GBP supported)
+   - Billing Interval (month/year)
+   - Trial Days (if any, 0-90 days)
+   - Tier Level (1-10)
+   
+   Features List:
+   - Feature name with included/not included indicator
+   - Feature limits (if any)
+   
+   - "Choose Plan" or "Subscribe" button
+   - Current plan indicator (if logged in)
+
+4. FEATURE COMPARISON TABLE
+   - Detailed comparison of all plans
+   - Checkmarks for included features
+   - Limits for each tier
+
+5. FAQ SECTION
+   - Common pricing questions
+   - Billing cycle info
+   - Upgrade/downgrade policy
+   - Refund policy
+
+--------------------------------------------------------------------------------
+
+=== LOGIN PAGE ===
+
+Page Purpose: User authentication
+
+Content:
+1. LOGIN FORM
+   - Email input field (required, validated format)
+   - Password input field (required)
+   - "Remember Me" checkbox option
+   - Login button
+   - Show/hide password toggle
+
+2. ADDITIONAL LINKS
+   - "Forgot Password?" link
+   - "Don't have an account? Register" link
+
+3. SOCIAL LOGIN (if implemented)
+   - Google login option
+   - Other OAuth providers
+
+4. ERROR MESSAGES
+   - Invalid credentials error
+   - Account suspended error
+   - Email not verified warning
+
+--------------------------------------------------------------------------------
+
+=== REGISTER PAGE ===
+
+Page Purpose: New user account creation
+
+Content:
+1. REGISTRATION FORM
+   - Name input (required, max 100 chars)
+   - Email input (required, unique, validated format)
+   - Password input (minimum requirements shown)
+   - Confirm Password input
+   - Terms & Conditions checkbox
+   - Register/Create Account button
+
+2. PASSWORD REQUIREMENTS
+   - Minimum length indication
+   - Special character requirements
+   - Strength indicator
+
+3. ADDITIONAL LINKS
+   - "Already have an account? Login" link
+   - Terms of Service link
+   - Privacy Policy link
+
+4. SUCCESS STATE
+   - Verification email sent message
+   - Instruction to check email
+
+--------------------------------------------------------------------------------
+
+=== FORGOT PASSWORD PAGE ===
+
+Page Purpose: Password reset request
+
+Content:
+1. RESET REQUEST FORM
+   - Email input field
+   - "Send Reset Link" button
+   - Back to login link
+
+2. SUCCESS MESSAGE
+   - Email sent confirmation
+   - Instructions to check email
+   - Link expiry info
+
+--------------------------------------------------------------------------------
+
+=== RESET PASSWORD PAGE ===
+
+Page Purpose: Set new password (via token link)
+
+Content:
+1. NEW PASSWORD FORM
+   - New password input
+   - Confirm new password input
+   - Password requirements shown
+   - Reset Password button
+
+2. ERROR STATES
+   - Invalid/expired token message
+   - Request new link option
+
+3. SUCCESS STATE
+   - Password changed confirmation
+   - Redirect to login
+
+--------------------------------------------------------------------------------
+
+=== EMAIL VERIFICATION PAGE ===
+
+Page Purpose: Verify user email (via token link)
+
+Content:
+1. VERIFICATION STATUS
+   - Loading state while verifying
+   - Success: Email verified confirmation
+   - Error: Invalid/expired token message
+
+2. NEXT STEPS
+   - Link to continue to login
+   - Resend verification option
+
+--------------------------------------------------------------------------------
+
+                           AUTHENTICATED PAGES
+--------------------------------------------------------------------------------
+
+=== DASHBOARD / HOME ===
+
+Page Purpose: User's main hub after login
+
+Content:
+1. WELCOME SECTION
+   - Personalized greeting with user name
+   - Last login time display
+
+2. SUBSCRIPTION STATUS CARD
+   - Current plan name
+   - Subscription status (trialing/active/past_due/canceled/expired)
+   - Current period end date
+   - Access tier level
+   - "Manage Subscription" button
+
+3. QUICK STATS
+   - Content viewed count
+   - Content completed count
+   - Subscription days remaining
+
+4. RECENT CONTENT
+   - Last accessed content items
+   - Continue watching/reading options
+
+5. NOTIFICATIONS PREVIEW
+   - Unread notification count
+   - Recent notification items
+   - "View All" link
+
+6. QUICK ACTIONS
+   - Browse Content
+   - Manage Billing
+   - View Settings
+
+--------------------------------------------------------------------------------
+
+=== CONTENT LIBRARY PAGE ===
+
+Page Purpose: Browse all available content
+
+Content:
+1. PAGE HEADER
+   - "Content Library" title
+   - Search bar
+
+2. FILTER OPTIONS
+   - By Content Type:
+     * Video
+     * Article
+     * Course
+     * Download
+   - By Category
+   - By Required Tier (show which tier needed)
+   - By Tags
+
+3. SORT OPTIONS
+   - Newest first
+   - Most viewed
+   - Most completed
+   - Alphabetical
+
+4. CONTENT GRID/LIST
+   For each content item:
+   - Thumbnail image
+   - Title (max 200 chars)
+   - Description preview
+   - Content type badge (video/article/course/download)
+   - Required tier indicator
+   - Lock icon (if user's tier is insufficient)
+   - Duration (for videos, in seconds)
+   - Word count (for articles)
+   - View count
+   - Completion rate
+   - Category label
+   - Tags
+
+5. PAGINATION
+   - Page numbers
+   - Items per page selector
+
+6. NO CONTENT STATE
+   - Message when no content matches filters
+
+--------------------------------------------------------------------------------
+
+=== CONTENT VIEWER PAGE ===
+
+Page Purpose: View individual content (tier-gated)
+
+Content:
+1. ACCESS CHECK
+   - If user has access (tier level sufficient):
+     * Full content displayed
+   - If user lacks access:
+     * Preview/teaser content (if available)
+     * Upgrade prompt
+     * Required tier information
+
+2. CONTENT HEADER
+   - Title
+   - Author name with avatar
+   - Published date
+   - Category and tags
+   - Engagement stats (views, completions, avg time)
+
+3. CONTENT BODY
+   For Video:
+   - Video player
+   - Duration display
+   - Progress tracking
+   
+   For Article:
+   - Full article text
+   - Word count
+   - Reading time estimate
+   
+   For Course:
+   - Module/lesson structure
+   - Progress tracking
+   
+   For Download:
+   - Download button
+   - File information
+
+4. ENGAGEMENT ACTIONS
+   - Mark as complete button
+   - Bookmark option
+   - Share options
+
+5. RELATED CONTENT
+   - Similar content suggestions
+   - Same category content
+
+--------------------------------------------------------------------------------
+
+=== CONTENT HISTORY PAGE ===
+
+Page Purpose: User's content access history
+
+Content:
+1. HISTORY LIST
+   For each access entry:
+   - Content title
+   - Access type (view/download/stream/complete)
+   - Access granted status (yes/no)
+   - If denied: denial reason
+   - Timestamp
+   - Duration spent
+   - Completion percentage (0-100%)
+   - Device info (browser, platform)
+
+2. FILTERS
+   - By access type
+   - By date range
+   - Granted vs denied
+
+3. PAGINATION
+   - Standard pagination controls
+
+--------------------------------------------------------------------------------
+
+=== SUBSCRIPTION PAGE ===
+
+Page Purpose: View current subscription details
+
+Content:
+1. CURRENT SUBSCRIPTION CARD
+   - Plan name
+   - Plan description
+   - Current price with currency
+   - Billing interval (month/year)
+   - Tier level access
+
+2. SUBSCRIPTION STATUS
+   - Status badge:
+     * Trialing (trial period active)
+     * Active (paying subscription)
+     * Past Due (payment failed, in grace period)
+     * Unpaid (all retries failed)
+     * Canceled (scheduled to end)
+     * Expired (access ended)
+   
+   - Current period: start to end dates
+   - Trial dates (if applicable): start to end
+   - Cancel scheduled date (if cancelAtPeriodEnd is true)
+   - Cancel reason (if canceled):
+     * Too Expensive
+     * Not Using
+     * Missing Features
+     * Other
+
+3. PAYMENT METHOD
+   - Card brand (Visa, Mastercard, etc.)
+   - Last 4 digits
+   - Expiry month/year
+   - Update payment method button
+
+4. PRORATION INFO (if applicable)
+   - Credit amount
+   - When applied
+
+5. ACTION BUTTONS
+   - Upgrade Plan
+   - Downgrade Plan
+   - Cancel Subscription
+   - Reactivate (if canceled but period not ended)
+   - Access Billing Portal (Stripe hosted)
+
+6. PAUSE OPTION (if available)
+   - Pause subscription temporarily
+   - Resume date
+
+--------------------------------------------------------------------------------
+
+=== BILLING PORTAL ===
+
+Page Purpose: Stripe hosted billing management
+
+Content (Stripe manages this):
+1. PAYMENT HISTORY
+   - All transactions
+   - Invoice downloads
+
+2. PAYMENT METHODS
+   - Add/remove cards
+   - Set default
+
+3. SUBSCRIPTION MANAGEMENT
+   - Plan changes
+   - Cancellation
+
+4. BILLING INFORMATION
+   - Contact details
+   - Address
+
+--------------------------------------------------------------------------------
+
+=== CHECKOUT SUCCESS PAGE ===
+
+Page Purpose: Post-successful payment confirmation
+
+Content:
+1. SUCCESS MESSAGE
+   - Subscription created confirmation
+   - Plan name subscribed to
+   - Welcome message
+
+2. NEXT STEPS
+   - Access your content button
+   - View subscription details
+   - Explore features
+
+3. CONFIRMATION EMAIL
+   - Notification about receipt email sent
+
+--------------------------------------------------------------------------------
+
+=== CHECKOUT CANCEL PAGE ===
+
+Page Purpose: User canceled checkout
+
+Content:
+1. CANCEL MESSAGE
+   - Checkout was not completed
+   - Subscription not created
+
+2. OPTIONS
+   - Return to pricing
+   - Try again
+   - Contact support if issues
+
+--------------------------------------------------------------------------------
+
+=== NOTIFICATIONS PAGE ===
+
+Page Purpose: View all user notifications
+
+Content:
+1. NOTIFICATION CONTROLS
+   - Mark all as read button
+   - Filter by read/unread
+   - Unread count badge
+
+2. NOTIFICATION TYPES (received from system):
+   - Welcome notification
+   - Email verification request
+   - Subscription created
+   - Payment succeeded
+   - Payment failed (with update link)
+   - Renewal reminder (7, 3, 1 days before)
+   - Trial ending warning
+   - Subscription canceled confirmation
+   - Password reset request
+
+3. NOTIFICATION LIST
+   For each notification:
+   - Icon based on type
+   - Title
+   - Message body
+   - Priority indicator (low/normal/high/urgent)
+   - Timestamp
+   - Read/unread status
+   - Action URL (if applicable)
+   - Mark as read button
+   - Delete button
+
+4. PAGINATION
+   - Load more or pagination
+
+5. EMPTY STATE
+   - No notifications message
+
+--------------------------------------------------------------------------------
+
+=== SETTINGS PAGE ===
+
+Page Purpose: User account and preference settings
+
+Content:
+1. PROFILE SECTION
+   - Avatar upload/change
+   - Name (editable, max 100 chars)
+   - Email (display only, verified badge if verified)
+   - Phone (optional, E.164 format)
+
+2. NOTIFICATION PREFERENCES
+   - Email notifications toggle (on/off)
+   - Renewal reminders toggle
+   - Product updates toggle
+
+3. TIMEZONE SETTING
+   - Select timezone (default UTC)
+
+4. SECURITY SECTION
+   - Change password
+     * Current password
+     * New password
+     * Confirm new password
+   - Two-Factor Authentication (TOTP)
+     * Enable/Disable 2FA
+     * Setup with authenticator app
+
+5. SESSION MANAGEMENT
+   - View active sessions
+   - Current session indicator
+   - Revoke access from devices
+
+6. DANGER ZONE
+   - Export my data (GDPR data export)
+   - Delete my account (with confirmation)
+     * Cancels subscription
+     * Deletes all data
+
+--------------------------------------------------------------------------------
+
+                              ADMIN PAGES
+--------------------------------------------------------------------------------
+
+=== ADMIN DASHBOARD ===
+
+Page Purpose: Overview metrics for admins
+
+Content:
+1. KEY METRICS CARDS
+   - Total Users count
+   - New Users (in date range)
+   - Active Subscriptions count
+   - Churned Subscriptions count
+   - Total Revenue (in date range)
+   - MRR (Monthly Recurring Revenue)
+   - Content Views count
+
+2. TIME SERIES CHARTS
+   - Signups over time
+   - Revenue over time
+   - Subscriptions over time
+   - Content views over time
+   - Granularity options: hour/day/week/month
+
+3. CONVERSION FUNNEL
+   - Signups count
+   - Trial starts count
+   - Trial to subscription conversions
+   - Active subscribers count
+   - Visualization of conversion rates
+
+4. TOP CONTENT
+   - Most viewed content items
+   - Content ID, title, views count
+
+5. DATE RANGE SELECTOR
+   - Start date picker
+   - End date picker
+   - Preset ranges (7d, 30d, 90d, 1y)
+
+--------------------------------------------------------------------------------
+
+=== USER MANAGEMENT PAGE ===
+
+Page Purpose: Manage all platform users
+
+Content:
+1. USER LIST
+   - Search by name, email
+   - Filter by:
+     * Role (subscriber/content_manager/admin)
+     * Status (active/suspended/deleted)
+     * Email verified (yes/no)
+   
+   For each user:
+   - Avatar
+   - Name
+   - Email
+   - Role badge
+   - Status badge
+   - Email verified indicator
+   - Last login date
+   - Created date
+   - Actions: View, Edit, Suspend/Reactivate, Delete
+
+2. USER DETAIL VIEW
+   - All profile information
+   - Stripe Customer ID
+   - Preferences (notification settings, timezone)
+
+3. USER STATS
+   - Subscription history
+   - Payment history
+   - Content access stats
+   - Login history
+
+4. USER ACTIONS
+   - Create new user
+   - Update user details
+   - Change role
+   - Suspend user account
+   - Reactivate suspended user
+   - Delete user (with cascade)
+
+--------------------------------------------------------------------------------
+
+=== SUBSCRIPTION MANAGEMENT PAGE ===
+
+Page Purpose: View and manage all subscriptions
+
+Content:
+1. SUBSCRIPTION LIST
+   - Filter by status
+   - Filter by plan
+   - Search by user
+
+   For each subscription:
+   - User name and email
+   - Plan name
+   - Status with color coding
+   - Current period dates
+   - Trial dates (if applicable)
+   - Stripe Subscription ID
+   - Cancel at period end indicator
+   - Actions: View details, Force cancel
+
+2. SUBSCRIPTION DETAILS
+   - Full subscription object
+   - Payment method info
+   - Proration info
+   - Metadata
+
+--------------------------------------------------------------------------------
+
+=== PLAN MANAGEMENT PAGE ===
+
+Page Purpose: Create and manage subscription plans
+
+Content:
+1. PLAN LIST
+   - Sort by order
+   - Filter by active/inactive
+
+   For each plan:
+   - Name
+   - Slug
+   - Price with currency
+   - Interval (month/year)
+   - Tier level
+   - Trial days
+   - Active status
+   - Stripe IDs
+   - Actions: Edit, Activate/Deactivate
+
+2. CREATE/EDIT PLAN FORM
+   - Name (max 50 chars)
+   - Slug (lowercase alphanumeric with hyphens)
+   - Description (max 500 chars)
+   - Price (min 0)
+   - Currency (usd/eur/gbp)
+   - Interval (month/year)
+   - Interval count
+   - Trial days (0-90)
+   - Tier level (1-10)
+   - Sort order
+   - Features list:
+     * Feature name
+     * Included (yes/no)
+     * Limit (optional number)
+   - Stripe Price ID (required)
+   - Stripe Product ID (required)
+
+3. PLAN ACTIONS
+   - Create new plan
+   - Update existing plan
+   - Activate plan
+   - Deactivate plan (existing subscribers continue)
+
+--------------------------------------------------------------------------------
+
+=== CONTENT MANAGEMENT PAGE ===
+
+Page Purpose: Create, edit, manage content
+
+Content:
+1. CONTENT LIST
+   - Search by title
+   - Filter by:
+     * Type (video/article/course/download)
+     * Status (draft/published/archived)
+     * Category
+     * Required tier
+     * Author
+     * Tags
+
+   For each content:
+   - Thumbnail preview
+   - Title
+   - Type badge
+   - Status badge
+   - Required tier
+   - Author
+   - Category
+   - Published date
+   - Engagement stats
+   - Actions: Edit, Publish, Archive, Delete
+
+2. CREATE/EDIT CONTENT FORM
+   - Title (max 200 chars)
+   - Slug (auto-generated)
+   - Description (max 2000 chars)
+   - Content Type (video/article/course/download)
+   - Status (draft/published/archived)
+   - Required Tier (0-10, 0 = free/preview)
+   - File URL
+   - Thumbnail URL
+   - Duration (for videos, in seconds)
+   - Word count (for articles)
+   - Author (select user)
+   - Category (required)
+   - Tags (multiple)
+   - SEO:
+     * Meta title
+     * Meta description
+   - Publish date
+
+3. CONTENT ANALYTICS
+   - Views count
+   - Completions count
+   - Average time spent
+   - Bookmarks count
+   - Access log history
+
+--------------------------------------------------------------------------------
+
+=== PAYMENT HISTORY PAGE (Admin View) ===
+
+Page Purpose: View all platform payments
+
+Content:
+1. PAYMENT LIST
+   - Filter by status (pending/succeeded/failed/refunded/disputed)
+   - Filter by date range
+   - Search by user
+
+   For each payment:
+   - User name
+   - Amount with currency
+   - Status badge
+   - Stripe Payment Intent ID
+   - Stripe Invoice ID
+   - Payment method (card type, last 4)
+   - Created date
+   - Actions: View details, Refund
+
+2. PAYMENT DETAILS
+   - Full billing details
+   - Failure code and message (if failed)
+   - Refund amount and reason (if refunded)
+   - Dispute ID (if disputed)
+   - Invoice URL
+   - Receipt URL
+
+3. REFUND PROCESSING
+   - Partial or full refund option
+   - Refund reason
+
+--------------------------------------------------------------------------------
+
+=== NOTIFICATION LOGS PAGE ===
+
+Page Purpose: View all system notifications sent
+
+Content:
+1. NOTIFICATION LIST
+   - Filter by:
+     * Type
+     * Channel (email/in_app)
+     * Status (pending/sent/delivered/failed)
+   - Search by user
+
+   For each notification:
+   - User
+   - Type
+   - Channel
+   - Status
+   - Subject
+   - Sent at
+   - Delivered at
+   - Opened at
+   - Clicked at
+   - Failure reason (if failed)
+   - Retry count
+
+--------------------------------------------------------------------------------
+
+=== ANALYTICS EVENTS PAGE ===
+
+Page Purpose: View raw analytics events
+
+Content:
+1. EVENT LIST
+   - Filter by event type:
+     * page_view
+     * content_view
+     * content_complete
+     * subscription_started
+     * subscription_canceled
+     * subscription_renewed
+     * payment_succeeded
+     * payment_failed
+     * login
+     * signup
+     * search
+     * feature_used
+   - Filter by date range
+   - Filter by user
+
+   For each event:
+   - Event type
+   - Event name
+   - User (if associated)
+   - Session ID
+   - Properties (JSON)
+   - Device info
+   - Location
+   - Referrer
+   - Page URL
+   - Timestamp
+
+--------------------------------------------------------------------------------
+
+=== SYSTEM HEALTH PAGE ===
+
+Page Purpose: System monitoring
+
+Content:
+1. HEALTH STATUS
+   - MongoDB connection status
+   - Redis connection status
+   - Stripe API status
+   - SendGrid API status
+   - Background job queue status
+
+2. SYSTEM INFO
+   - Uptime
+   - Memory usage
+   - Response times
+
+3. LOGS VIEWER
+   - Recent error logs
+   - Application logs
+
+================================================================================
+                              EMAIL TEMPLATES
+================================================================================
+
+System sends following emails via SendGrid:
+
+1. WELCOME EMAIL
+   - New user registration ke baad
+   - Platform ka welcome message
+
+2. EMAIL VERIFICATION
+   - Verification link with token
+   - Instructions to verify
+
+3. SUBSCRIPTION CREATED
+   - Plan details
+   - Access information
+   - Billing info
+
+4. PAYMENT SUCCEEDED
+   - Payment receipt
+   - Amount charged
+   - Invoice link
+
+5. PAYMENT FAILED
+   - Failure notification
+   - Reason if available
+   - Update payment method link
+
+6. RENEWAL REMINDER (7, 3, 1 days before)
+   - Upcoming renewal notice
+   - Amount to be charged
+   - Date of renewal
+
+7. TRIAL ENDING
+   - Trial expiry warning
+   - Subscribe to continue message
+
+8. SUBSCRIPTION CANCELED
+   - Cancellation confirmation
+   - Access end date
+   - Reactivation option
+
+9. PASSWORD RESET
+   - Reset link with token
+   - Expiry information
+
+================================================================================
+                              WEBHOOK EVENTS
+================================================================================
+
+Platform handles following Stripe webhooks:
+
+1. checkout.session.completed - Checkout finished
+2. customer.subscription.created - New subscription
+3. customer.subscription.updated - Status changes
+4. customer.subscription.deleted - Subscription ended
+5. invoice.payment_succeeded - Payment successful
+6. invoice.payment_failed - Payment failed
+7. customer.subscription.trial_will_end - Trial ending soon
+8. charge.dispute.created - Chargeback filed
+
+================================================================================
+                              DATA RETENTION
+================================================================================
+
+- Analytics Events: 2 years (auto-deleted after)
+- Content Access Logs: 1 year (auto-deleted after)
+- Read In-App Notifications: 30 days (auto-deleted after)
+- Expired Notifications: Deleted immediately
+
+================================================================================
+                              COMPLIANCE
+================================================================================
+
+- PCI DSS: SAQ-A level (Stripe handles card data)
+- GDPR Compliant:
+  * Right to access (data export)
+  * Right to erasure (account deletion)
+  * Data portability (JSON export)
+  * Consent management
+  * Privacy by design
+
+================================================================================
+                              SUCCESS METRICS
+================================================================================
+
+Key Performance Indicators:
+- System Uptime: 99.9% target
+- API Response Time (p95): < 500ms
+- API Response Time (p99): < 1000ms
+- Error Rate: < 0.1%
+- Webhook Processing Delay: < 5 min
+- MRR (Monthly Recurring Revenue)
+- Churn Rate
+- Conversion Rate (Trial to Paid)
+- ARPU (Average Revenue Per User)
+- CLV (Customer Lifetime Value)
+
+================================================================================
+                              END OF DOCUMENT
+================================================================================

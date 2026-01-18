@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: subsflow-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: subsflow-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
