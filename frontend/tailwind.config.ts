@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        serif: ["var(--font-instrument-serif)", "serif"],
+        sans: ["var(--font-geist-sans)", "sans-serif"],
+        serif: ["var(--font-fraunces)", "serif"],
       },
       colors: {
         background: "#F8F9FB", // Off-white surface

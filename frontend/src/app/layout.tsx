@@ -1,22 +1,17 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google"; // Instrument Serif requested
+import { Fraunces } from "next/font/google"; // Soft Serif
+import { GeistSans } from "geist/font/sans"; // Vercel's New Sans
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import { Preloader } from "@/components/layout/Preloader";
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
 
-const instrumentSerif = Instrument_Serif({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-instrument-serif",
+  variable: "--font-fraunces",
   display: "swap",
-  weight: "400", // Instrument Serif only has 400
-  style: ["normal", "italic"],
+  // Fraunces is a variable font, weights are automatic
 });
 
 export const metadata: Metadata = {
@@ -35,8 +30,8 @@ export default function RootLayout({
         suppressHydrationWarning
         className={cn(
           "min-h-screen bg-background font-sans antialiased text-primary selection:bg-indigo-100 selection:text-indigo-600",
-          inter.variable,
-          instrumentSerif.variable
+          GeistSans.variable,
+          fraunces.variable
         )}
       >
         <Preloader />

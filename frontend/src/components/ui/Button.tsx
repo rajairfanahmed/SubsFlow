@@ -7,11 +7,11 @@ import { Loader2 } from "lucide-react";
 import { motion, HTMLMotionProps } from "framer-motion";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-full text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:pointer-events-none disabled:opacity-50 will-change-transform",
+  "inline-flex items-center justify-center rounded-full text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 disabled:pointer-events-none disabled:opacity-50 will-change-transform active:scale-[0.98]",
   {
     variants: {
       variant: {
-        default: "bg-[#0F172A] text-white hover:bg-slate-800 shadow-lg shadow-slate-900/10 hover:shadow-[0_0_25px_rgba(15,23,42,0.15)]",
+        default: "bg-[#0F172A] text-white hover:bg-slate-800 shadow-lg shadow-indigo-500/10 hover:shadow-[0_0_20px_rgba(99,102,241,0.25)] border border-slate-800",
         destructive: "bg-red-500 text-white hover:bg-red-600 shadow-sm hover:shadow-red-500/20",
         outline: "border border-slate-200 bg-white hover:bg-slate-50 text-slate-900",
         secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200/80",
